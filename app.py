@@ -10,3 +10,4 @@ model = load_model('model/model.pkl')
 
 def predict(data):
     return model.predict(data)
+
