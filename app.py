@@ -12,7 +12,7 @@ st.set_page_config(page_title='Employee Turnover Predictor', layout='wide')
 
 # ~~~~ Title ~~~~
 with st.sidebar:
-    st.title("Employee Turnover Prediction Web App")
+    st.title("🕸️ Employee Turnover Prediction Web App")
     # st.write("Predict the likelihood of employee turnover using machine learning model.")
 
 # ~~~~ Add Guidelines to the App ~~~~
@@ -29,7 +29,7 @@ with st.expander("💡 Guidelines", expanded=True):
 
 # ~~~~ Column 1 ~~~~
 # ~~~~ Employee Details Input ~~~~
-st.subheader("Employee Details")
+st.subheader("👤 Employee Details")
 col1, col2= st.columns([2,1])
 with col1:
     age = st.number_input("Age", min_value=18, max_value=65, value=25)
@@ -37,7 +37,7 @@ with col2:
     total_working_years = st.number_input("Total Working Years", min_value=0, max_value=50, value=5)
 
 # ~~~~ Employee Job Related Information ~~~~
-st.subheader("Job Related Information")
+st.subheader("🏢 Job Related Information")
 job_involvement = st.slider("Job Involvement", min_value=1, max_value=4, value=3) # notes: what is job involvement? Might need to explain
 col1, col2= st.columns([2,1])
 with col1:
@@ -46,7 +46,7 @@ with col2:
     years_in_current_role = st.number_input("Years in Current Role", min_value=0, max_value=50, value=2) # notes: what if the employee is new?
 
 # ~~~~ Employee Salary Information ~~~~
-st.subheader("Salary Information")
+st.subheader("💰 Salary Information")
 col1, col2= st.columns([2,1])
 with col1:
     monthly_income = st.number_input("Monthly Income", min_value=1000, max_value=20000, value=5000) # notes: what is the currency? Might need to specify
