@@ -1,12 +1,15 @@
-How to use Git:
+# How to use Git:
 
-Basic:
+## Basic:
+```bash
 git commit -m "message"
 git push
 git pull
 git add .
+```
 
-Branching:
+## Branching:
+```bash
 git branch # see the branches
 git status # see anything to commit
 git checkout <branchname> # switch branch
@@ -25,8 +28,11 @@ git checkout -b <branchname>
 
 Merge branch
 git merge <branchname> # make sure you are at the branch and merge the other branch
+```
 
-Creating file
+## Creating file
+```bash
 cat > <filaname>
 vim <filename>
 touch <filename>
+```
