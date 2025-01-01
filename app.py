@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from backend.model import load_model
 import time
+import google.generativeai as genai
 
 # Page title
 st.set_page_config(page_title='Employee Turnover Predictor', layout='wide')
@@ -51,13 +52,25 @@ with st.sidebar:
         percent_salary_hike = st.number_input("Percent Salary Hike", min_value=0, max_value=50, value=12) # notes: what is percent salary hike? Might need to explain
     
     submit = st.button("Compute", type="primary")
+    st.divider()
+    
+    with st.expander("🧪 Experimental Features", expanded=False):
+        st.caption("API token can be obtained at https://aistudio.google.com/.")
+        gemini_api = st.text_input("Gemini Token", "", type='password')
+        try:
+            genai.configure(api_key=gemini_api)
+            ai_model = genai.GenerativeModel("gemini-1.5-flash")
+            test = ai_model.generate_content("Explain how AI works")
+            st.success("API key is valid. Experimental feature access granted.")
+        except Exception as e:
+            st.error("API key is invalid. You don't have access to experimental features.")
+            
 
 # Notes: What if the user do not input the data? Might need to add validation
 
 # ~~~~ Column 2 ~~~~
 # ~~~~Display the project information ~~~~
 with st.sidebar:
-    st.divider()
     st.caption("MIT License © 2025 Khor Kean Teng, Ng Jing Wen, Lim Sze Chie, Tan Yee Thong, Yee See Marn")
 
 model = load_model('model/model.pkl')
@@ -135,17 +148,27 @@ input_data = pd.DataFrame({
 
 # ~~~~ Predict Button ~~~~
 if submit:
+    prediction = model.predict(input_data)
+    if prediction[0] == 0:
+        message = "The employee is not likely to leave the company."
+    else:
+        message = "The employee is likely to leave the company."
+        
     with st.status("Predicting...", expanded = True) as status:
-         # set a 1.5 seconds delay
         # Get the prediction
-        prediction = model.predict(input_data)
         time.sleep(1) 
         status.update(
             label = "Prediction Results", state="complete", expanded = True
         )
-        
         # Display the prediction
         if prediction[0] == 0:
-            st.error("The employee is not likely to leave the company.")
+            st.error(message)
         else:
-            st.success("The employee is likely to leave the company.")
+            st.success(message)
+
+    with st.status("AI Opinion", expanded=True):
+        try:
+            response = ai_model.generate_content(f"Give some opinions in about 100 word based on the prediction results where the employee is {message}")
+            st.write(response.text)
+        except Exception as e:
+            st.write("You don't have access to this feature. Please authenticate to use this feature.")

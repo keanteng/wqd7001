@@ -12,7 +12,7 @@ st.title("Attrition Prediction Engine")
 st.write("Welcome to the Attrition Prediction Engine! This tool is designed to help you batch process employee data and predict attrition.")
 
 with st.sidebar:
-    with st.expander("🧪 Experimental Features", expanded=True):
+    with st.expander("🧪 Experimental Features", expanded=False):
         st.caption("API token can be obtained at https://aistudio.google.com/.")
         gemini_api = st.text_input("Gemini Token", "", type='password')
         try:
