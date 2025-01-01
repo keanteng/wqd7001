@@ -1,4 +1,7 @@
 import streamlit as st
+import pandas as pd
+
+st.set_page_config(page_title='Documentation', layout='wide')
 
 with st.sidebar:
     with st.expander("⚠️ Disclaimer", expanded=True):
@@ -32,4 +35,15 @@ st.subheader("Data Source")
 st.write(
     "The dataset used in this project is from the IBM HR Analytics Employee Attrition & Performance dataset \
     available on Kaggle. It is a synthetic dataset with 1,470 observations and 35 features, covering \
-    employee background, employment details, and satisfaction metrics.")
+    employee background, employment details, and satisfaction metrics. Below attached the sample data for reference.")
+
+# set up the download data
+data = pd.read_csv("data/sample_data.csv")
+data = data.to_csv(index=False).encode("utf-8")
+
+st.download_button(
+    label="Download Sample Data",
+    data=data,
+    file_name="sample_data.csv",
+    mime="text/csv"
+)

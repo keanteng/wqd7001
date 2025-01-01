@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 from backend.model import load_model
-from backend.transform import *
 import time
 
 # Page title
@@ -16,7 +15,8 @@ st.markdown("""An example app powered by Streamlit to predict the likelihood of 
 
 # ~~~~ Add Guidelines to the App ~~~~
 with st.sidebar:
-    toggle = st.toggle("Show Guidelines", False)
+    toggle = st.toggle("Show Guidelines", True)
+    st.write("**Input Details**")
 
 if toggle:
     with st.expander("💡 Guidelines", expanded=True): 
