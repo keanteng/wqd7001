@@ -2,6 +2,8 @@ import streamlit as st
 from backend.bot import *
 from backend.model import *
 import pandas as pd
+import time
+import google.generativeai as genai
 
 # Page title
 st.set_page_config(page_title='Batch Processing', layout='wide')
@@ -10,7 +12,19 @@ st.title("Attrition Prediction Engine")
 st.write("Welcome to the Attrition Prediction Engine! This tool is designed to help you batch process employee data and predict attrition.")
 
 with st.sidebar:
-    with st.expander("⚠️ Disclaimer", expanded=True):
+    with st.expander("🧪 Experimental Features", expanded=True):
+        st.caption("API token can be obtained at https://aistudio.google.com/.")
+        gemini_api = st.text_input("Gemini Token", "", type='password')
+        try:
+            genai.configure(api_key=gemini_api)
+            ai_model = genai.GenerativeModel("gemini-1.5-flash")
+            test = ai_model.generate_content("Explain how AI works")
+            st.success("API key is valid. Experimental feature access granted.")
+        except Exception as e:
+            st.error("API key is invalid. You don't have access to experimental features.")
+
+    
+    with st.expander("⚠️ Disclaimer", expanded=False):
         st.write("This web app is intended for prediction purposes only. The results are based on the input data provided and \
         the performance of the machine learning model. The accuracy of the predictions may vary depending on data quality \
         and model reliability.")
@@ -35,5 +49,28 @@ with st.chat_message("assistant", avatar="https://cdn4.iconfinder.com/data/icons
     
 model = load_model("model/model.pkl")
 
+def count_attrition(predictions):
+    return sum(predictions)
+
 if submit:
-    prediction = model.predict(data)
+    with st.status("Data Preview", expanded=True):
+        time.sleep(.5)
+        st.write(f"You've uploaded a data file of {data.shape[0]} rows and {data.shape[1]} columns. Here's a preview of the data:")
+        st.write(data.head())
+    
+    with st.status("Predicting Attrition...", expanded=True):
+        time.sleep(2)
+        prediction = model.predict(data)
+        data['Attrition'] = prediction
+        attrition_count = count_attrition(prediction)
+        output = f"Prediction completed! There are {attrition_count} cases of attrition. Here's a preview of the data with the predicted attrition status:"
+        st.write(output)
+        st.write(data.head())
+    
+    with st.status("AI Opinion", expanded=True):
+        try:
+            response = ai_model.generate_content(f"Give some opinions in about 100 word based on the prediction results where there are {attrition_count} cases of attrition.")
+            st.write(response.text)
+        except Exception as e:
+            st.write("You don't have access to this feature. Please authenticate to use this feature.")
+
