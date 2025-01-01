@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from backend.model import load_model
 from backend.transform import *
+import time
 
 # Page title
 st.set_page_config(page_title='Employee Turnover Predictor', layout='wide')
@@ -10,11 +11,12 @@ st.set_page_config(page_title='Employee Turnover Predictor', layout='wide')
 #st.sidebar.title("Employee Turnover Predictor")
 
 # ~~~~ Title ~~~~
-st.title("Employee Turnover Prediction Web App")
-st.write("Predict the likelihood of employee turnover using machine learning model.")
+with st.sidebar:
+    st.title("Employee Turnover Prediction Web App")
+    # st.write("Predict the likelihood of employee turnover using machine learning model.")
 
 # ~~~~ Add Guidelines to the App ~~~~
-with st.expander("Guidelines", expanded=True): 
+with st.expander("💡 Guidelines", expanded=True): 
     st.write("Follow the steps below to predict the likelihood of employee turnover:")
     st.write("1. Fill in the employee details, job-related information, and salary information in the form.")
     st.write("2. Click on the 'Predict' button to get the prediction results.")
@@ -23,27 +25,33 @@ with st.expander("Guidelines", expanded=True):
     st.write("5. The predictioon results will be displayed below the 'Predict' button.")
 
 # ~~~~ Layout: 2 Columns ~~~~
-col1, col2= st.columns([2,1])
+
 
 # ~~~~ Column 1 ~~~~
 # ~~~~ Employee Details Input ~~~~
+st.subheader("Employee Details")
+col1, col2= st.columns([2,1])
 with col1:
-    st.header("Employee Details")
     age = st.number_input("Age", min_value=18, max_value=65, value=25)
+with col2:
     total_working_years = st.number_input("Total Working Years", min_value=0, max_value=50, value=5)
 
 # ~~~~ Employee Job Related Information ~~~~
+st.subheader("Job Related Information")
+job_involvement = st.slider("Job Involvement", min_value=1, max_value=4, value=3) # notes: what is job involvement? Might need to explain
+col1, col2= st.columns([2,1])
 with col1:
-    st.header("Job Related Information")
-    job_involvement = st.slider("Job Involvement", min_value=1, max_value=4, value=3) # notes: what is job involvement? Might need to explain
     years_at_company = st.number_input("Years at Company", min_value=0, max_value=50, value=3) # notes: what if the employee is new?
+with col2:    
     years_in_current_role = st.number_input("Years in Current Role", min_value=0, max_value=50, value=2) # notes: what if the employee is new?
 
 # ~~~~ Employee Salary Information ~~~~
+st.subheader("Salary Information")
+col1, col2= st.columns([2,1])
 with col1:
-    st.header("Salary Information")
     monthly_income = st.number_input("Monthly Income", min_value=1000, max_value=20000, value=5000) # notes: what is the currency? Might need to specify
     daily_rate = st.number_input("Daily Rate", min_value=100, max_value=1500, value=500)
+with col2:
     hourly_rate = st.number_input("Hourly Rate", min_value=5, max_value=100, value=20)
     percent_salary_hike = st.number_input("Percent Salary Hike", min_value=0, max_value=50, value=12) # notes: what is percent salary hike? Might need to explain
 
@@ -51,8 +59,8 @@ with col1:
 
 # ~~~~ Column 2 ~~~~
 # ~~~~Display the project information ~~~~
-with col2:
-    st.header("Project Information")
+with st.sidebar:
+    # st.header("Project Information")
     tab1, tab2, tab3, tab4 = st.tabs(["About", "Statistics", "Case Study", "Data Source"])
 
     with tab1:
@@ -100,17 +108,17 @@ monthly_income = (monthly_income - 1000)/(20000 - 1000)
 daily_rate = (daily_rate - 100)/(1500 - 100)
 
 # Create a DataFrame for the input data
-input_data = pd.DataFrame({
-    'Age': [age],
-    'TotalWorkingYears': [total_working_years],
-    'JobInvolvement': [job_involvement],
-    'YearsAtCompany': [years_at_company],
-    'YearsInCurrentRole': [years_in_current_role],
-    'MonthlyIncome': [monthly_income],
-    'DailyRate': [daily_rate],
-    'HourlyRate': [hourly_rate],
-    'PercentSalaryHike': [percent_salary_hike]
-})
+# input_data = pd.DataFrame({
+#     'Age': [age],
+#     'TotalWorkingYears': [total_working_years],
+#     'JobInvolvement': [job_involvement],
+#     'YearsAtCompany': [years_at_company],
+#     'YearsInCurrentRole': [years_in_current_role],
+#     'MonthlyIncome': [monthly_income],
+#     'DailyRate': [daily_rate],
+#     'HourlyRate': [hourly_rate],
+#     'PercentSalaryHike': [percent_salary_hike]
+# })
 
 # default data (random)
 business_travel = 1
@@ -168,12 +176,16 @@ input_data = pd.DataFrame({
 
 # ~~~~ Predict Button ~~~~
 st.markdown("---")  # Horizontal separator
-if st.button("Predict"):
-    # Get the prediction
-    prediction = model.predict(input_data)
+if st.button("Predict", type="primary"):
+    with st.spinner("Predicting..."):
+         # set a 1.5 seconds delay
+        time.sleep(1.5)
+        
+        # Get the prediction
+        prediction = model.predict(input_data)
 
-    # Display the prediction
-    if prediction[0] == 0:
-        st.error("The employee is not likely to leave the company.")
-    else:
-        st.success("The employee is likely to leave the company.")
+        # Display the prediction
+        if prediction[0] == 0:
+            st.error("The employee is not likely to leave the company.")
+        else:
+            st.success("The employee is likely to leave the company.")
