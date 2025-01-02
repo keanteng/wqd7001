@@ -12,13 +12,10 @@ __pycache__/
 # Streamlit specific files
 .streamlit/
 
-# Data files
-*.csv
-*.json
-*.xlsx
+
 
 # Model files
-*.pkl
+
 *.h5
 
 # Logs
