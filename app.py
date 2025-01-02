@@ -22,11 +22,11 @@ with st.sidebar:
 if toggle:
     with st.expander("💡 Guidelines", expanded=True): 
         st.write("Follow the steps below to predict the likelihood of employee turnover:")
-        st.write("1. Fill in the employee details, job-related information, and salary information in the form.")
+        st.write("1. Fill in the employee details, job-related information, salary information and satisfactory information in the form.")
         st.write("2. Click on the 'Predict' button to get the prediction results.")
         st.write("3. The prediction results will show whether the employee is likely to leave the company or not.")
         st.write("4. The 'Project Information' section provides details about employee turnover, statistics, case study, and data source.")
-        st.write("5. The predictioon results will be displayed below the 'Predict' button.")
+        st.write("5. The prediction results will be displayed below the 'Predict' button.")
 
 # ~~~~ Layout: 2 Columns ~~~~
 
@@ -36,21 +36,28 @@ if toggle:
 with st.sidebar:
     with st.expander("👤 Employee Details", expanded=False):
         age = st.number_input("Age", min_value=18, max_value=65, value=25)
+        marital_status = st.selectbox("Marital Status", ["Single", "Married", "Divorced"])
         total_working_years = st.number_input("Total Working Years", min_value=0, max_value=50, value=5)
 
         # ~~~~ Employee Job Related Information ~~~~
     with st.expander("🏢 Job Related Information", expanded=False):
         job_involvement = st.slider("Job Involvement", min_value=1, max_value=4, value=3)
-        years_at_company = st.number_input("Years at Company", min_value=0, max_value=50, value=3) # notes: what if the employee is new?  
-        years_in_current_role = st.number_input("Years in Current Role", min_value=0, max_value=50, value=2) # notes: what if the employee is new?
+        overtime = st.radio("Overtime", ["Yes", "No"])
+        years_at_company = st.number_input("Years at Company", min_value=0, max_value=50, value=3) 
+        years_in_current_role = st.number_input("Years in Current Role", min_value=0, max_value=50, value=2)
 
         # ~~~~ Employee Salary Information ~~~~
-    with st.expander("💰 Salary Information", expanded=False):
-        monthly_income = st.number_input("Monthly Income", min_value=1000, max_value=20000, value=5000) # notes: what is the currency? Might need to specify
+    with st.expander("💰 Salary Information (RM)", expanded=False):
+        monthly_income = st.number_input("Monthly Income", min_value=1000, max_value=20000, value=5000) 
         daily_rate = st.number_input("Daily Rate", min_value=100, max_value=1500, value=500)
         hourly_rate = st.number_input("Hourly Rate", min_value=5, max_value=100, value=20)
-        percent_salary_hike = st.number_input("Percent Salary Hike", min_value=0, max_value=50, value=12) # notes: what is percent salary hike? Might need to explain
+        percent_salary_hike = st.number_input("Percent Salary Hike", min_value=0, max_value=50, value=12) 
     
+        # ~~~~ Employee Satisfaction Information ~~~~
+    with st.expander("😊 Satisfaction Information", expanded=False):
+        job_satisfaction = st.slider("Job Satisfaction", min_value=1, max_value=4, value=3)
+        environment_satisfaction = st.slider("Environment Satisfaction", min_value=1, max_value=4, value=3)
+
     submit = st.button("Compute", type="primary")
     st.divider()
     
@@ -66,8 +73,6 @@ with st.sidebar:
             st.error("API key is invalid. You don't have access to experimental features.")
             
 
-# Notes: What if the user do not input the data? Might need to add validation
-
 # ~~~~ Column 2 ~~~~
 # ~~~~Display the project information ~~~~
 with st.sidebar:
@@ -78,34 +83,19 @@ model = load_model('model/model.pkl')
 # Do data transformation here
 monthly_income = (monthly_income - 1000)/(20000 - 1000)
 daily_rate = (daily_rate - 100)/(1500 - 100)
+hourly_rate = (hourly_rate - 5)/(100 - 5)
+marital_status = 1 if marital_status == "Divorced" else 2 if marital_status == "Married" else 3
+overtime = 1 if overtime == "Yes" else 0
 
-# Create a DataFrame for the input data
-# input_data = pd.DataFrame({
-#     'Age': [age],
-#     'TotalWorkingYears': [total_working_years],
-#     'JobInvolvement': [job_involvement],
-#     'YearsAtCompany': [years_at_company],
-#     'YearsInCurrentRole': [years_in_current_role],
-#     'MonthlyIncome': [monthly_income],
-#     'DailyRate': [daily_rate],
-#     'HourlyRate': [hourly_rate],
-#     'PercentSalaryHike': [percent_salary_hike]
-# })
-
-# default data (random)
 business_travel = 1
 department = 1
 distance_from_home = 2
 education = 3
 education_field = 1
-environment_satisfaction = 3
 gender = 1
 job_role = 1
-job_satisfaction = 4
-marital_status = 1
 monthly_rate = 1
 num_companies_worked = 2
-overtime = 1
 performance_rating = 3
 relationship_satisfaction = 3
 stock_option_level = 0
