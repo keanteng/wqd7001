@@ -1,1 +1,29 @@
-\backend\__pycache__
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Environment variables
+.env
+
+# Streamlit specific files
+.streamlit/
+
+# Data files
+*.csv
+*.json
+*.xlsx
+
+# Model files
+*.pkl
+*.h5
+
+# Logs
+*.log
+
+# Virtual environment
+venv/
+env/
